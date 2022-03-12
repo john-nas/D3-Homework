@@ -26,6 +26,7 @@ var chartgroup = svg.append("g")
 
 // Initial Params
 var chosenXAxis = "poverty";
+var chosenYAxis = "healthcare"
 
 // function used for updating x-scale var upon click on axis label
 function xScale(acs_data, chosenXAxis) {
@@ -114,7 +115,7 @@ d3.csv("data.csv").then(acs_data => {
 
   // Create y scale function
   var yLinearScale = d3.scaleLinear()
-    .domain([0, d3.max(acs_data, d => d.num_hits)])
+    .domain([0, d3.max(acs_data, d => d.healthcare)])
     .range([height, 0]);
 
   // Create initial axis functions
@@ -132,15 +133,16 @@ d3.csv("data.csv").then(acs_data => {
     .call(leftAxis);
 
   // append initial circles
-  var circlesGroup = chartgroup.selectAll("circle")
+  var circlesGroup = chartgroup.append("g")
+    .selectAll("circle")
     .data(acs_data)
     .enter()
     .append("circle")
     .attr("cx", d => xLinearScale(d[chosenXAxis]))
-    .attr("cy", d => yLinearScale(d.num_hits))
+    .attr("cy", d => yLinearScale(d.healthcare))
     .attr("r", 20)
-    .attr("fill", "pink")
-    .attr("opacity", ".5");
+    .attr("fill", "red")
+    .attr("opacity", ".4");
 
   // Create group for two x-axis labels
   var labelsGroup = chartgroup.append("g")
@@ -165,9 +167,10 @@ d3.csv("data.csv").then(acs_data => {
     .attr("transform", "rotate(-90)")
     .attr("y", 0 - margin.left)
     .attr("x", 0 - (height / 2))
+    //.attr("value", "healthcare") // value to grab for event listener
     .attr("dy", "1em")
     .classed("axis-text", true)
-    .text("Lacks Healthcar (%)");
+    .text("Lacks Healthcare (%)");
 
   // updateToolTip function above csv import
   var circlesGroup = updateToolTip(chosenXAxis, circlesGroup);
